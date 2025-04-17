@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GPA Calculator</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    
+  <div class="card">
+   
+    <h1>GPA Calculator</h1>
+
+    <label for="numSubjects">Enter number of subjects:</label>
+    <input type="number" id="numSubjects" min="1" placeholder="e.g. 5">
+    <button onclick="generateFields()">Next</button>
+
+    <form id="subjectForm" onsubmit="calculateGPA(event)">
+      <div id="fieldsContainer"></div>
+      <button type="submit" class="hidden" id="calcBtn">Calculate GPA</button>
+    </form>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  
+
+  <script>
+    function generateFields() {
+      const num = document.getElementById("numSubjects").value;
+      const container = document.getElementById("fieldsContainer");
+      const calcBtn = document.getElementById("calcBtn");
+      container.innerHTML = "";
+
+      if (num <= 0 || isNaN(num)) {
+        alert("Please enter a valid number of subjects.");
+        return;
+      }
+
+      for (let i = 1; i <= num; i++) {
+        const div = document.createElement("div");
+        div.className = "subject";
+        div.innerHTML = `
+          <label>Subject ${i}</label>
+          <input type="number" name="credit${i}" placeholder="Credits (e.g. 3)" min="1" required>
+          <select name="grade${i}" required>
+            <option value="" disabled selected>Select Grade</option>
+            <option value="10">A+</option>
+            <option value="9">A</option>
+            <option value="8">B+</option>
+            <option value="7">B</option>
+            <option value="6">C</option>
+            <option value="5">D</option>
+            <option value="0">F</option>
+          </select>
+        `;
+        container.appendChild(div);
+      }
+
+      calcBtn.classList.remove("hidden");
+    }
+
+    function calculateGPA(event) {
+      event.preventDefault();
+      const num = document.getElementById("numSubjects").value;
+      let totalCredits = 0;
+      let weightedSum = 0;
+
+      for (let i = 1; i <= num; i++) {
+        const credit = parseFloat(document.querySelector(`[name=credit${i}]`).value);
+        const grade = parseFloat(document.querySelector(`[name=grade${i}]`).value);
+
+        totalCredits += credit;
+        weightedSum += credit * grade;
+      }
+
+      const gpa = (weightedSum / totalCredits).toFixed(2);
+      document.getElementById("result").innerText = `Your GPA is: ${gpa}`;
+    }
+  </script>
+</body>
+</html>
